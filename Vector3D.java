@@ -182,7 +182,24 @@ public class Vector3D {
                 this.getY()/a,
                 this.getZ()/a);
     }
-     
+    /** Adds a vector, changing the values of the vector that invokes this method.
+     *
+     * @param a the vector that is added to
+     */
+    public void add(Vector3D a){
+    return new Vector3D(this.getX()+a.getX(),
+                this.getY()+a.getY(),
+                this.getZ()+a.getZ());
+    }
+    /** Subtracts a vector from the vector that invokes this method.
+     *
+     * @param a the vector that subtracts.
+     */
+    public void sub(Vector3D a){
+    return new Vector3D(this.getX()-a.getX(),
+                this.getY()-a.getY(),
+                this.getZ()-a.getZ());
+    }
      
     /*
      * Static methods
