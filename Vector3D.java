@@ -162,43 +162,41 @@ public class Vector3D {
     /** Multiplies a Vector3D by a double.
      *
      * @param a the double being multiplied by a vector
-     * @return a Vector3D multiplied by a double.
      */
  
-    public Vector3D mult(double a){
-    return new Vector3D(this.getX()*a,
-                this.getY()*a,
-                this.getZ()*a);
+    public void mult(double a){
+    x*=a;
+    y*=a;
+    z*=a;
     }
  
     /** Divides a Vector3D by a double.
      *
      * @param a the double being divided by a vector
-     * @return a Vector3D divided by a double.
      */
  
-    public Vector3D div(double a){
-    return new Vector3D(this.getX()/a,
-                this.getY()/a,
-                this.getZ()/a);
+    public void div(double a){
+    x/=a;
+    y/=a;
+    z/=a;
     }
     /** Adds a vector, changing the values of the vector that invokes this method.
      *
      * @param a the vector that is added to
      */
     public void add(Vector3D a){
-    return new Vector3D(this.getX()+a.getX(),
-                this.getY()+a.getY(),
-                this.getZ()+a.getZ());
+    x+=a.getX();
+    y+=a.getY();
+    z+=a.getZ();
     }
     /** Subtracts a vector from the vector that invokes this method.
      *
      * @param a the vector that subtracts.
      */
     public void sub(Vector3D a){
-    return new Vector3D(this.getX()-a.getX(),
-                this.getY()-a.getY(),
-                this.getZ()-a.getZ());
+    x-=a.getX();
+    y-=a.getY();
+    z-=a.getZ();
     }
      
     /*
