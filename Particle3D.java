@@ -173,7 +173,7 @@ public class Particle3D {
      *@param B Second Particle
      *@return Vector3D representing the separation between A and B
      */
-    public Vector3D ParticleSeparation(Particle3D A, Particle3D B){
-	return Vector3D.subVector(A.getPosition(), B.getPosition());
+    public Vector3D particleSeparation(Particle3D a, Particle3D b){
+	return Vector3D.subVector(a.getPosition(), b.getPosition());
     }
 }
