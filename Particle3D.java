@@ -1,6 +1,6 @@
 /**
  * Computer Modelling, Exercise 3: Particle3D class to simulate a particle with its
- * position, velocity, mass and label. Complete with getters, setters, constructors
+ * p osition, velocity, mass and label. Complete with getters, setters, constructors
  * and methods to time integration of a particle motion.
  *
  * @author Rapolas Daugintis
