@@ -42,7 +42,7 @@ public class Particle3D {
      *
      *@return a String representing the label of a particle.
      */
-    public String getLabel() {return new String(label);}
+    public String getLabel() {return label;}
    
     //Setters
 
@@ -68,7 +68,7 @@ public class Particle3D {
      *
      *@param l a string representing the label of a particle.
      */
-    public void setLabel(String l) {label = new String(l); }
+    public void setLabel(String l) {label = l; }
 
      /* ******************************************
      * Constructors
@@ -80,7 +80,7 @@ public class Particle3D {
 	mass = 0.0;
         position = new Vector3D();
         velocity = new Vector3D();
-	label = new String("Untitled");
+	label = "Untitled";
     }
 
     /** Explicit constructor. Constructs a new Particle3D with
@@ -95,7 +95,19 @@ public class Particle3D {
         mass = m;
         position = new Vector3D(p);
         velocity = new Vector3D(v);
-	label = new String(l);
+	label = l;
+    }
+    
+     /**Constructs the Particle3D with values scannes from the input file
+     *
+     *@param scan Scanner which contains the input file
+     */
+
+    public Particle3D(Scanner scan) throws IOException{
+	label = scan.next();
+	position = new Vector3D(scan.nextDouble(),scan.nextDouble(),scan.nextDouble());
+	velocity = new Vector3D(scan.nextDouble(),scan.nextDouble(),scan.nextDouble());
+	mass = scan.nextDouble();
     }
 
     /* ******************************************
@@ -116,20 +128,7 @@ public class Particle3D {
      /* ******************************************
      * Instance and Static Methods
      ********************************************/
- 
-    /**Method to scan the values for Particle3D from input file
-     *
-     *@param scan Scanner which contains the input file
-     */
-
-    public void scan(Scanner scan) throws IOException{
-	label = new String(scan.next());
-	position = new Vector3D(scan.nextDouble(),scan.nextDouble(),scan.nextDouble());
-	velocity = new Vector3D(scan.nextDouble(),scan.nextDouble(),scan.nextDouble());
-	mass = scan.nextDouble();
-    }
-   
-    /**Returns kinetic energy of a particle 0.5*m*|v|^2.
+     /**Returns kinetic energy of a particle 0.5*m*|v|^2.
      *
      *@return a double, which represents kinetic energy.
      */
