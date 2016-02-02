@@ -164,21 +164,28 @@ public class Vector3D {
      * @param a the double being multiplied by a vector
      */
  
-    public void mult(double a){
-    x*=a;
-    y*=a;
-    z*=a;
+/** Multiplies a Vector3D by a double.
+     *
+     * @param a the double being multiplied by a vector
+     * @return a Vector3D multiplied by a double.
+     */
+ 
+    public Vector3D mult(double a){
+    return new Vector3D(this.getX()*a,
+                this.getY()*a,
+                this.getZ()*a);
     }
  
     /** Divides a Vector3D by a double.
      *
      * @param a the double being divided by a vector
+     * @return a Vector3D divided by a double.
      */
  
-    public void div(double a){
-    x/=a;
-    y/=a;
-    z/=a;
+    public Vector3D div(double a){
+    return new Vector3D(this.getX()/a,
+                this.getY()/a,
+                this.getZ()/a);
     }
     /** Adds a vector, changing the values of the vector that invokes this method.
      *
