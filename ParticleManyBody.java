@@ -8,7 +8,7 @@
  
 import java.io.*;
 import java.util.Scanner;
-public class Particle3DVerlet  {
+public class ParticleManyBody {
  
     /**
      *Main method of the class, which scans the particle from the
