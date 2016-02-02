@@ -42,7 +42,7 @@ public class Particle3D {
      *
      *@return a String representing the label of a particle.
      */
-    public String getLabel() {return label;}
+    public String getLabel() {return new String(label);}
    
     //Setters
 
@@ -68,7 +68,7 @@ public class Particle3D {
      *
      *@param l a string representing the label of a particle.
      */
-    public void setLabel(String l) {label = l; }
+    public void setLabel(String l) {label = new String(l); }
 
      /* ******************************************
      * Constructors
@@ -80,7 +80,7 @@ public class Particle3D {
 	mass = 0.0;
         position = new Vector3D();
         velocity = new Vector3D();
-	label = "Untitled";
+	label = new String("Untitled");
     }
 
     /** Explicit constructor. Constructs a new Particle3D with
@@ -95,18 +95,7 @@ public class Particle3D {
         mass = m;
         position = new Vector3D(p);
         velocity = new Vector3D(v);
-	label = l;
-    }
-    
-    /**Constructor, which scans the values for Particle3D from an input file
-     *
-     *@param scan Scanner which contains the input file
-     */
-     public  Particle3D(Scanner scan) throws IOException{
-	label = scan.next()
-	position = new Vector3D(scan.nextDouble(),scan.nextDouble(),scan.nextDouble());
-	velocity = new Vector3D(scan.nextDouble(),scan.nextDouble(),scan.nextDouble());
-	mass = scan.nextDouble();
+	label = new String(l);
     }
 
     /* ******************************************
@@ -119,14 +108,27 @@ public class Particle3D {
      *@return String representing the label and position of the particle.
      */
     public String toString() {
-        return "<"+getLabel()+"> " + "<" + position.getX() + "> "
-	    + "<" + position.getY() + "> "
-	    +  "<" + position.getZ() + ">";
+        return getLabel()+" "+ position.getX() + " "
+	    + " " + position.getY() + " "
+	    +  " " + position.getZ() + " ";
     }
 
      /* ******************************************
      * Instance and Static Methods
      ********************************************/
+ 
+    /**Method to scan the values for Particle3D from input file
+     *
+     *@param scan Scanner which contains the input file
+     */
+
+    public void scan(Scanner scan) throws IOException{
+	label = new String(scan.next());
+	position = new Vector3D(scan.nextDouble(),scan.nextDouble(),scan.nextDouble());
+	velocity = new Vector3D(scan.nextDouble(),scan.nextDouble(),scan.nextDouble());
+	mass = scan.nextDouble();
+    }
+   
     /**Returns kinetic energy of a particle 0.5*m*|v|^2.
      *
      *@return a double, which represents kinetic energy.
@@ -171,7 +173,7 @@ public class Particle3D {
      *@param B Second Particle
      *@return Vector3D representing the separation between A and B
      */
-    public Vector3D particleSeparation(Particle3D a, Particle3D b){
-	return Vector3D.subVector(a.getPosition(), b.getPosition());
+    public Vector3D ParticleSeparation(Particle3D A, Particle3D B){
+	return Vector3D.subVector(A.getPosition(), B.getPosition());
     }
 }
