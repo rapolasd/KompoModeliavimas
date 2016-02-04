@@ -1,5 +1,5 @@
 /**
- * The code to simulate orbit of a particle using Verlet time
+ * The code to simulate an N-body Solar system using Verlet time
  * integration.
  *
  * @author Rapolas Daugintis
@@ -129,13 +129,57 @@ public class ParticleManyBody {
      *Static method to calculate the total energy of a system E=KE+PE
      *
      *@param particle Particle3D for which the energy has to be calculated
+     *@return double which is the potential energy of a particle 
+     */
+    public static double potentialEnergy(Particle3D a, Particle3D b){
+
+    }
+    
+    /**
+     *Updates all positions of particles using the current velocities
+     *
+     *@param bodies an array of bodies to be integrated
+     *@param oldforces old forces that acted on the bodies
+     *@param forces forces that are currently acting on the bodies
+     *@param dt time step for integration
+     */
+     public static void leapPositionArray(Particle3D[] bodies, Vector3D[] oldforces,
+     Vector3D[] forces, double dt){
+     }
+      /**
+     *Updates all velocities using the position of particles and forces by Velocity Verlet method
+     *
+     *@param bodies an array of bodies to be integrated
+     *@param oldforces old forces that acted on the bodies
+     *@param forces forces that are currently acting on the bodies
+     *@param dt time step for integration
+     */
+     public static void leapVelocityVerletArray(Particle3D[] bodies, Vector3D[] oldforces,
+     Vector3D[] forces, double dt){
+      
+      
+     }
+      /**
+     *Updates all forces using the position of particles
+     *
+     *@param bodies an array of bodies
+     *@param oldforces old forces that acted on the bodies
+     *@param forces forces that are currently acting on the bodies
+     */
+     public static void leapForceArray(Particle3D[] bodies, Vector3D[] oldforces,
+     Vector3D[] forces, double dt){
+     
+     
+     }
+      /**
+     *Writes out particle’s parameters in format suitable for a VMD trajectory file
+     *@param b an array of bodies
      *@return Vector3D which is the total energy of a particle 
      */
-    public static double getEnergy(Particle3D particle){
-    double m1 = particle.getMass();
-    //Hard-wired second mass
-    double m2 = 1;
-    Vector3D r = new Vector3D(particle.getPosition());
-    return -m1*m2/r.mag() + particle.kineticEnergy();
-    }
+      public static String vmdEntry(Particle3D[] b){
+       
+      }
+      
+     }
+     
 }
