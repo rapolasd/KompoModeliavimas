@@ -1,5 +1,5 @@
 /**
- * The code to simulate orbit of a particle using Verlet time
+ * The code to simulate an N-body Solar system using Verlet time
  * integration.
  *
  * @author Rapolas Daugintis
@@ -172,8 +172,7 @@ public class ParticleManyBody {
      
      }
       /**
-     *Writes out particle’s parameters in format suitable for a VMD trajectory fil
-     *
+     *Writes out particle’s parameters in format suitable for a VMD trajectory file
      *@param b an array of bodies
      *@return Vector3D which is the total energy of a particle 
      */
