@@ -143,8 +143,11 @@ public class ParticleManyBody {
      *@param forces forces that are currently acting on the bodies
      *@param dt time step for integration
      */
-     public static void leapPositionArray(Particle3D[] bodies, Vector3D[] oldforces,
+     public static void leapPositionArray(Particle3D[] bodies,
      Vector3D[] forces, double dt){
+	 while(i<bodies.size()){
+	     bodies[i].setPosition(bodies[i].getPosition()+bodies[i].getVelocity()*dt+(1/(2*bodies[i].getMass()))*forces[]*dt*dt);
+	 }
      }
       /**
      *Updates all velocities using the position of particles and forces by Velocity Verlet method
