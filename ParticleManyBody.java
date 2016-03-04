@@ -134,9 +134,21 @@ public class ParticleManyBody {
      *@return double which is the potential energy of a particle 
      */
     //DAR NEBAIGTA FUNKCIJA
-    public static double potentialEnergy(Particle3D a){
-	double c=0;
-	return c;
+    public static double leapPotentialEnergy(Particle3D bodies, double[][] potentialTable){
+	 for(int i=0; i < bodies.length; i++){
+		 forces[i].setVector(0.0, 0.0 , 0.0);
+	     for(int j=0;j<bodies.length;j++){
+		 if(j==i){
+		     continue;
+		 }
+		 else if(j<i){
+		     Vector3D.addVector(forces[i],forcetable[j][i].mult(-1));
+		 }
+		 else{
+		     Vector3D.addVector(forces[i],forcetable[i][j]);
+		 }
+	 }
+	     }
     }
     public static double totalEnergy(){
 	double a=0;
@@ -165,7 +177,7 @@ public class ParticleManyBody {
      *@param forces forces that are currently acting on the bodies
      *@param dt time step for integration
      */
-     public static void leapVelocityVerletArray(Particle3D[] bodies, Vector3D[] oldforces,
+     public static void leapVelocityVerletArray(Particle3D[] bodies, Vector3D[] oldForces,
      Vector3D[] forces, double dt){
 	 for(int i=0;i<bodies.length;i++){
 	     bodies[i].setVelocity(Vector3D.addVector(bodies[i].getVelocity(),(Vector3D.addVector(oldforces[i],forces[i]).mult((1/(2*bodies[i].getMass()))))));
@@ -178,10 +190,7 @@ public class ParticleManyBody {
      *@param oldforces old forces that acted on the bodies
      *@param forces forces that are currently acting on the bodies
      */
-     public static void leapForceArray(Particle3D[] bodies, Vector3D[] oldforces,Vector3D[] forces,Vector3D[][] forcetable ){
-	 for(int i=0;i < bodies.length; i++){
-	     oldforces[i].copy(forces[i]);
-	 }
+     public static void leapForceArray(Particle3D[] bodies, Vector3D[] forces,Vector3D[][] forcetable ){
 	 for(int i=0; i < bodies.length; i++){
 	     for(int j=0;j<bodies.length;j++){
 		 if(j<i || j==i){
