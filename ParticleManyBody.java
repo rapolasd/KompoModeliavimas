@@ -184,7 +184,7 @@ public class ParticleManyBody {
 	 }
 	 for(int i=0; i < bodies.length; i++){
 	     for(int j=0;j<bodies.length;j++){
-		 if(j<i){
+		 if(j<i || j==i){
 		     continue;
 		 }
 		 else{
@@ -194,7 +194,10 @@ public class ParticleManyBody {
 	 }
 	     for(int i=0; i < bodies.length; i++){
 	     for(int j=0;j<bodies.length;j++){
-		 if(j<i){
+		 if(j==i){
+		     continue;
+		 }
+		 else if(j<i){
 		     Vector3D.addVector(forces[i],forcetable[j][i].mult(-1));
 		 }
 		 else{
