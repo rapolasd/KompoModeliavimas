@@ -168,11 +168,11 @@ public class Particle3D {
     }
     /**Static method, which returns the separation between two Particles.
      *
-     *@param A First Particle
-     *@param B Second Particle
-     *@return Vector3D representing the separation between A and B
+     *@param a First Particle
+     *@param b Second Particle
+     *@return Vector3D representing the separation between a and b (a-b)
      */
-    public Vector3D particleSeparation(Particle3D a, Particle3D b){
-	return Vector3D.subVector(b.getPosition(), b.getPosition());
+    public static Vector3D particleSeparation(Particle3D a, Particle3D b){
+	return Vector3D.subVector(a.getPosition(), b.getPosition());
     }
 }

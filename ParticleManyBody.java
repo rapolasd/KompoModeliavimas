@@ -114,15 +114,17 @@ public class ParticleManyBody {
     /**
      *Static method to calculate the gravitational force on a particle
      * 
-     *@param  particle Particle3D for which the force has to be calculated
-     *@return Vector3D which is a gravitational force on a particle   
+     *@param  particle1 Particle3D for which the force has to be calculated
+     *@param  particle2 Particle3D instance which acts on the first particle
+     *@return Vector3D which is a gravitational force on particle1   
      */
-    public static Vector3D getForce(Particle3D particle){
-    double m1 = particle.getMass();
-    //Hard-wired second mass
-    double m2 = 1;
-    Vector3D r = new Vector3D(particle.getPosition());
-        return r.mult(-m1*m2/(r.magSq()*r.mag()));
+    public static Vector3D getForce(Particle3D p1, Particle3D p2, Vector3D f){
+    double m1 = p1.getMass();
+    double m2 = p2.getMass();
+    double grav=1;
+    Vector3D r = Particle3D.particleSeparation(p1,p2);
+	f.copy(r.mult(-grav*m1*m2/(r.magSq()*r.mag())));
+	return f;
     }
  
     /**
@@ -131,8 +133,14 @@ public class ParticleManyBody {
      *@param particle Particle3D for which the energy has to be calculated
      *@return double which is the potential energy of a particle 
      */
-    public static double potentialEnergy(Particle3D a, Particle3D b){
-
+    //DAR NEBAIGTA FUNKCIJA
+    public static double potentialEnergy(Particle3D a){
+	double c=0;
+	return c;
+    }
+    public static double totalEnergy(){
+	double a=0;
+	return a;
     }
     
     /**
@@ -144,9 +152,9 @@ public class ParticleManyBody {
      *@param dt time step for integration
      */
      public static void leapPositionArray(Particle3D[] bodies,
-     Vector3D[] forces, double dt){
-	 while(i<bodies.size()){
-	     bodies[i].setPosition(bodies[i].getPosition()+bodies[i].getVelocity()*dt+(1/(2*bodies[i].getMass()))*forces[]*dt*dt);
+					  Vector3D[] forces, double dt){
+	 for(int i=0;i<bodies.length;i++){
+	     bodies[i].setPosition(Vector3D.addVector(bodies[i].getPosition(),Vector3D.addVector((bodies[i].getVelocity().mult(dt)),forces[i].mult(dt*dt*(1/(2*bodies[i].getMass()))))));
 	 }
      }
       /**
@@ -159,8 +167,9 @@ public class ParticleManyBody {
      */
      public static void leapVelocityVerletArray(Particle3D[] bodies, Vector3D[] oldforces,
      Vector3D[] forces, double dt){
-      
-      
+	 for(int i=0;i<bodies.length;i++){
+	     bodies[i].setVelocity(Vector3D.addVector(bodies[i].getVelocity(),(Vector3D.addVector(oldforces[i],forces[i]).mult((1/(2*bodies[i].getMass()))))));
+	 }
      }
       /**
      *Updates all forces using the position of particles
@@ -169,20 +178,42 @@ public class ParticleManyBody {
      *@param oldforces old forces that acted on the bodies
      *@param forces forces that are currently acting on the bodies
      */
-     public static void leapForceArray(Particle3D[] bodies, Vector3D[] oldforces,
-     Vector3D[] forces, double dt){
-     
-     
+     public static void leapForceArray(Particle3D[] bodies, Vector3D[] oldforces,Vector3D[] forces,Vector3D[][] forcetable ){
+	 for(int i=0;i < bodies.length; i++){
+	     oldforces[i].copy(forces[i]);
+	 }
+	 for(int i=0; i < bodies.length; i++){
+	     for(int j=0;j<bodies.length;j++){
+		 if(j<i){
+		     continue;
+		 }
+		 else{
+		     forcetable[i][j]=getForce(bodies[i],bodies[j],forcetable[i][j]);
+		 }
+	     }
+	 }
+	     for(int i=0; i < bodies.length; i++){
+	     for(int j=0;j<bodies.length;j++){
+		 if(j<i){
+		     Vector3D.addVector(forces[i],forcetable[j][i].mult(-1));
+		 }
+		 else{
+		     Vector3D.addVector(forces[i],forcetable[i][j]);
+		 }
+	 }
+	     }
      }
       /**
      *Writes out particle’s parameters in format suitable for a VMD trajectory file
      *@param b an array of bodies
      *@return Vector3D which is the total energy of a particle 
      */
-      public static String vmdEntry(Particle3D[] b){
-       
-      }
-      
-     }
-     
+    public static void vmdEntry(Particle3D[] bodies, int step, PrintWriter file){
+	file.printf("%d\n",bodies.length);
+	file.printf("Point = %d\n",step);
+	for(int i=0; i<bodies.length;i++){
+	    file.printf("%s %f %f %f\n", bodies[i].getLabel(), bodies[i].getPosition().getX(),bodies[i].getPosition().getY(),bodies[i].getPosition().getZ());
+	}
+    }
 }
+   
