@@ -105,9 +105,10 @@ public class Particle3D {
 
     public Particle3D(Scanner scan) throws IOException{
 	label = scan.next();
+	mass = scan.nextDouble();
 	position = new Vector3D(scan.nextDouble(),scan.nextDouble(),scan.nextDouble());
 	velocity = new Vector3D(scan.nextDouble(),scan.nextDouble(),scan.nextDouble());
-	mass = scan.nextDouble();
+	
     }
 
     /* ******************************************
