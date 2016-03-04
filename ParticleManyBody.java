@@ -15,100 +15,88 @@ public class ParticleManyBody {
      *input file, defined by first argument of the class and outputs
      *modelled trajectory.
      *
-     *argv[0] input file name
-     *argv[1] size of a timestep
+     *argv[0] particle input file name
+     *argv[1] parameter input file name
+     *argv[2] output file name
      */
- 
     public static void main (String[] argv) throws IOException {
- 
-    //Create new particle
-    Particle3D p = new Particle3D();
-     
-    //Open the file which the values will be readed from
-    BufferedReader file = new BufferedReader(new FileReader(argv[0]));
-     
-    //Attach a Scanner to the file to parse the numbers
-    Scanner scan = new Scanner(file);
-    //Scan the values from the file and assign them to Particle3D
-    p.scan(scan);
- 
-    //Print the particle to the terminal
-    System.out.printf("Particle: %s\n", p);
- 
-    // Open the output files for different plots
-        PrintWriter outputX = new PrintWriter(new FileWriter("XvsT_Verlet"));
-    PrintWriter outputY = new PrintWriter(new FileWriter("YvsT_Verlet"));
-    PrintWriter outputE = new PrintWriter(new FileWriter("EvsT_Verlet"));
-    PrintWriter outputXY = new PrintWriter(new FileWriter("YvsX_Verlet"));
- 
-    //Initial Force
-    Vector3D force = getForce(p);
- 
-    //Initial  energy
-    double E = getEnergy(p);
- 
-    /*Creating 2 variables for maximum and minimum energy to see
-     *maximum energy fluctuation.
-     */
-    double Emin = E;
-    double Emax = E;
- 
-    // Size of timestep
-        double dt = Double.parseDouble(argv[1]);
-    // Number of timesteps for 3 full rotations
-        int numstep = (int)(6.0*Math.PI/dt);     
+	BufferedReader input = new BufferedReader(new FileReader(argv[0]));
+	BufferedReader param = new BufferedReader(new FileReader(argv[1]));
+	PrintWriter output = new PrintWriter(new FileWriter(argv[2]));
+	Scanner parameters = new Scanner(param);
+	Scanner in = new Scanner(input);
+	Particle3D[] particleArray = new Particle3D[in.nextInt()];
+	for (int i = 0; i < particleArray.length ; i++){
+	    particleArray[i] = new Particle3D(in) ;
+	}
+
+	//Number of steps
+	int numstep = parameters.nextInt(); 
+	// Size of timestep
+        double dt = parameters.nextDouble();     
         // Initial time
         double t = 0;
  
-    //The start of the Verlet algorithm
+	//The start of the Verlet algorithm
+
+	Vector3D[] forceArray = new Vector3D[particleArray.length];
+	for (int i = 0; i < forceArray.length; i++){
+	    forceArray[i] = new Vector3D();
+		}
+
+	Vector3D[][] forceTable = new Vector3D[particleArray.length][particleArray.length];
+	for (int i = 0; i < forceTable.length; i++){
+	    for (int j = 0; j < forceTable.length; j++){
+		forceTable[i][j] = new Vector3D();
+		}
+	}
+
+	Vector3D[] oldForceArray = new Vector3D[particleArray.length];
+	for (int i = 0; i < oldForceArray.length; i++){
+	    oldForceArray[i] = new Vector3D();
+		}
+
+	leapForceArray(particleArray, forceArray, forceTable);
  
         // Print the initial conditions to the files
-    outputX.printf("%f %f\n", t, p.getPosition().getX());
-    outputY.printf("%f %f\n", t, p.getPosition().getY());
-    outputE.printf("%f %f\n", t, E);
-    outputXY.printf("%f %f\n",p.getPosition().getX(), p.getPosition().getY());
+	vmdEntry(particleArray, 1, output);
  
  
         //Loop over timesteps
         for (int i=0;i<numstep;i++){
  
              // Update the postion using current velocity
-        p.leapPosition(dt, force);
+	    leapPositionArray(particleArray, forceArray, dt);
  
             // Update the force using current position
-        Vector3D forceNew = new Vector3D(getForce(p));
+	    leapForceArray(particleArray, forceArray, forceTable);
  
             // Update the velocity based on average of current and new force
-            p.leapVelocity(dt,Vector3D.addVector(force, forceNew).mult(0.5));
+            leapVelocity(particleArray, oldForceArray, forceArray, dt);
+	    //Update the total energy using current position
+	    //E = getEnergy(p);
  
-        //Update the total energy using current position
-        E = getEnergy(p);
+	    //Check if current energy is minimum or maximum.
+	    //   Emin = Math.min(Emin, E);
+	    // Emax = Math.max(Emax, E);
  
-        //Check if current energy is minimum or maximum.
-        Emin = Math.min(Emin, E);
-        Emax = Math.max(Emax, E);
- 
-        //Update the old force
-        force = new Vector3D(forceNew);
- 
+	    //Update the old force
+	    for(int i=0;i < particleArray.length; i++){
+	     oldForceArray[i].copy(ForceArray[i]);
+	 }
             // Increase the time
             t = t + dt;
- 
-            // Print the current parameters to files
-        outputX.printf("%f %f\n", t, p.getPosition().getX());
-        outputY.printf("%f %f\n", t, p.getPosition().getY());
-        outputE.printf("%f %f\n", t, E);
-        outputXY.printf("%f %f\n",p.getPosition().getX(), p.getPosition().getY());
+	    
+	    // Print the current parameters to files
+	    vmdEntry(particleArray, i+2, output)
         }
+
     //Print the maximum energy fluctuation
-    System.out.printf("Maximum energy fluctuation: %10.7f\n", Math.abs(Emax-Emin));
-    System.out.printf("Smaller than 1E-06? %s\n", 1.0E-06> Math.abs(Emax-Emin));
+	//   System.out.printf("Maximum energy fluctuation: %10.7f\n", Math.abs(Emax-Emin));
+	// System.out.printf("Smaller than 1E-06? %s\n", 1.0E-06> Math.abs(Emax-Emin));
  
-        // Close the output files
-        outputX.close();
-    outputY.close();
-    outputE.close();
-    outputXY.close();
+        // Close the output file
+        output.close();
     }
     
     /**
@@ -154,7 +142,7 @@ public class ParticleManyBody {
      public static void leapPositionArray(Particle3D[] bodies,
 					  Vector3D[] forces, double dt){
 	 for(int i=0;i<bodies.length;i++){
-	     bodies[i].setPosition(Vector3D.addVector(bodies[i].getPosition(),Vector3D.addVector((bodies[i].getVelocity().mult(dt)),forces[i].mult(dt*dt*(1/(2*bodies[i].getMass()))))));
+	     bodies[i].setPosition(Vector3D.addVector(bodies[i].getPosition(), Vector3D.addVector((bodies[i].getVelocity().mult(dt)),forces[i].mult(dt*dt*(1/(2*bodies[i].getMass()))))));
 	 }
      }
       /**
@@ -212,12 +200,13 @@ public class ParticleManyBody {
      *@param b an array of bodies
      *@return Vector3D which is the total energy of a particle 
      */
-    public static void vmdEntry(Particle3D[] bodies, int step, PrintWriter file){
-	file.printf("%d\n",bodies.length);
-	file.printf("Point = %d\n",step);
+public static void vmdEntry(Particle3D[] bodies, int step, PrintWriter output){
+	output.printf("%d\n",bodies.length);
+	output.printf("Point = %d\n",step);
 	for(int i=0; i<bodies.length;i++){
-	    file.printf("%s %f %f %f\n", bodies[i].getLabel(), bodies[i].getPosition().getX(),bodies[i].getPosition().getY(),bodies[i].getPosition().getZ());
+	    output.printf("%s\n", bodies[i]);
 	}
-    }
+    }    
+
 }
    
