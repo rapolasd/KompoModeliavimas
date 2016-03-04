@@ -72,7 +72,7 @@ public class ParticleManyBody {
 	    leapForceArray(particleArray, forceArray, forceTable);
  
             // Update the velocity based on average of current and new force
-            leapVelocity(particleArray, oldForceArray, forceArray, dt);
+            leapVelocityVerletArray(particleArray, oldForceArray, forceArray, dt);
 	    //Update the total energy using current position
 	    //E = getEnergy(p);
  
@@ -81,14 +81,14 @@ public class ParticleManyBody {
 	    // Emax = Math.max(Emax, E);
  
 	    //Update the old force
-	    for(int i=0;i < particleArray.length; i++){
-	     oldForceArray[i].copy(ForceArray[i]);
+	    for(int j=0;j < particleArray.length; j++){
+	     oldForceArray[j].copy(forceArray[j]);
 	 }
             // Increase the time
             t = t + dt;
 	    
 	    // Print the current parameters to files
-	    vmdEntry(particleArray, i+2, output)
+	    vmdEntry(particleArray, i+2, output);
         }
 
     //Print the maximum energy fluctuation
@@ -157,7 +157,9 @@ public class ParticleManyBody {
      public static void leapVelocityVerletArray(Particle3D[] bodies, Vector3D[] oldForces,
      Vector3D[] forces, double dt){
 	 for(int i=0;i<bodies.length;i++){
-	     bodies[i].setVelocity(Vector3D.addVector(bodies[i].getVelocity(),(Vector3D.addVector(oldforces[i],forces[i]).mult((1/(2*bodies[i].getMass()))))));
+	     bodies[i].setVelocity(Vector3D.addVector(bodies[i].getVelocity(),
+						      (Vector3D.addVector(oldForces[i],forces[i]).
+						       mult((1/(2*bodies[i].getMass()))))));
 	 }
      }
       /**
