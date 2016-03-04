@@ -135,20 +135,9 @@ public class ParticleManyBody {
      */
     //DAR NEBAIGTA FUNKCIJA
     public static double leapPotentialEnergy(Particle3D bodies, double[][] potentialTable){
-	 for(int i=0; i < bodies.length; i++){
-		 forces[i].setVector(0.0, 0.0 , 0.0);
-	     for(int j=0;j<bodies.length;j++){
-		 if(j==i){
-		     continue;
-		 }
-		 else if(j<i){
-		     Vector3D.addVector(forces[i],forcetable[j][i].mult(-1));
-		 }
-		 else{
-		     Vector3D.addVector(forces[i],forcetable[i][j]);
-		 }
-	 }
-	     }
+	double c=0;
+	return c;
+
     }
     public static double totalEnergy(){
 	double a=0;
