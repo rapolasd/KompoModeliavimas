@@ -193,6 +193,7 @@ public class ParticleManyBody {
 	     }
 	 }
 	     for(int i=0; i < bodies.length; i++){
+		 forces[i].setVector(0.0, 0.0 , 0.0);
 	     for(int j=0;j<bodies.length;j++){
 		 if(j==i){
 		     continue;
