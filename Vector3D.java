@@ -187,25 +187,23 @@ public class Vector3D {
                 this.getY()/a,
                 this.getZ()/a);
     }
-    /** Adds a vector, changing the values of the vector that invokes this method.
+     /** Adds a vector, changing the values of the vector that invokes this method.
      *
      * @param a the vector that is added to
      */
-    public Vector3D add(Vector3D a){
+    public void add(Vector3D a){
     x+=a.getX();
     y+=a.getY();
     z+=a.getZ();
-    return new Vector3D(x,y,z);
     }
     /** Subtracts a vector from the vector that invokes this method.
-     *
+      *
      * @param a the vector that subtracts.
      */
-    public Vector3D sub(Vector3D a){
+    public void sub(Vector3D a){
     x-=a.getX();
     y-=a.getY();
     z-=a.getZ();
-      return new Vector3D(x,y,z);
     }
 
     /** Copies coordinates from another Vector3D instance

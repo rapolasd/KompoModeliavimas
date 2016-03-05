@@ -34,6 +34,26 @@ public class ParticleManyBody {
 	    particleArray[i] = new Particle3D(in) ;
 	}
 
+	//Adjusting centre of mass
+	//Total momentum and mass
+	Vector3D totalMomentum = new Vector3D();
+	double totalMass = 0.0;
+	for (int i = 0; i < particleArray.length; i++){
+	    totalMomentum.add(particleArray[i].getVelocity().
+			 mult(particleArray[i].getMass()));
+	    totalMass+=particleArray[i].getMass();
+	}
+       
+	//Velocity of the centre of mass
+	Vector3D comVelocity = totalMomentum.div(totalMass);
+
+	//Correcting the velocities
+	for (int i = 0; i < particleArray.length; i++){
+	    particleArray[i].setVelocity(Vector3D.
+					 subVector(particleArray[i].
+						   getVelocity(),
+						   comVelocity));
+	}
 	//Number of steps
 	int numstep = parameters.nextInt(); 
 	// Size of timestep
