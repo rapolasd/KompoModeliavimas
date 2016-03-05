@@ -33,7 +33,7 @@ public class ParticleManyBody {
 	for (int i = 0; i < particleArray.length ; i++){
 	    particleArray[i] = new Particle3D(in) ;
 	}
-
+	
 	//Adjusting centre of mass
 	//Total momentum and mass
 	Vector3D totalMomentum = new Vector3D();
@@ -46,7 +46,7 @@ public class ParticleManyBody {
        
 	//Velocity of the centre of mass
 	Vector3D comVelocity = totalMomentum.div(totalMass);
-
+	System.out.printf("%s\n",comVelocity);
 	//Correcting the velocities
 	for (int i = 0; i < particleArray.length; i++){
 	    particleArray[i].setVelocity(Vector3D.
@@ -54,6 +54,7 @@ public class ParticleManyBody {
 						   getVelocity(),
 						   comVelocity));
 	}
+       
 	//Number of steps
 	int numstep = parameters.nextInt(); 
 	// Size of timestep
@@ -64,11 +65,11 @@ public class ParticleManyBody {
 	double g = parameters.nextDouble();
 
 	//Double for total energy
-	double e = 0.0;
+	double e = totalEnergy(particleArray, g);
 	//Double for maximum total energy
-	double eMax = 0.0;
+	double eMax = e;
 	//Double for minimum total energy
-	double eMin = 0.0;
+	double eMin = e;
 	
 	//The start of the Verlet algorithm
 
@@ -115,7 +116,7 @@ public class ParticleManyBody {
  	    //Check if current energy is minimum or maximum.
 	    eMin = Math.min(eMin, e);
 	    eMax = Math.max(eMax, e);
- 
+	    
 	    //Update the old force
 	    for(int j=0;j < particleArray.length; j++){
 	     forceArray[j].copy(newForceArray[j]);
@@ -126,6 +127,26 @@ public class ParticleManyBody {
 	    
 	    // Print the current parameters to files
 	    vmdEntry(particleArray, i+2, output);
+
+	    /*    totalMomentum.setVector(0.0,0.0,0.0);
+	totalMass = 0.0;
+	for (int j = 0; j < particleArray.length; j++){
+	    totalMomentum.add(particleArray[j].getVelocity().
+			 mult(particleArray[j].getMass()));
+	    totalMass+=particleArray[j].getMass();
+	}
+       
+	//Velocity of the centre of mass
+	comVelocity = totalMomentum.div(totalMass);
+	System.out.printf("%s\n",comVelocity);
+	//Correcting the velocities
+	for (int j = 0; j < particleArray.length; j++){
+	    particleArray[j].setVelocity(Vector3D.
+					 subVector(particleArray[j].
+						   getVelocity(),
+						   comVelocity));
+	}
+	    */
         }
 
 	//Print the maximum energy fluctuation
