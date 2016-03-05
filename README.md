@@ -1,4 +1,3 @@
 # KompoModeliavimas
 
-Testuoju nauja brach'a.
-Testas nr.2.
+Planetų duomenų diena - 2016-03-05. Kitų nenaudoti pls.
