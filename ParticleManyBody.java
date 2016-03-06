@@ -20,7 +20,11 @@ public class ParticleManyBody {
      *argv[2] output file name
      */
     public static void main (String[] argv) throws IOException {
-
+	if (argv.length < 3){
+	    System.out.printf("Please provide the following parameters:\n");
+	    System.out.printf("\"Particle input file\" \"Parameter input file\" \"Output file name\"\n");
+	    System.exit(0);
+	}
 	//Initiate scanners for the input and the output writer
 	BufferedReader input = new BufferedReader(new FileReader(argv[0]));
 	BufferedReader param = new BufferedReader(new FileReader(argv[1]));
