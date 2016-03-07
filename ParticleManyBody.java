@@ -86,6 +86,8 @@ public class ParticleManyBody {
 	Vector3D[] oldPositions = new Vector3D[particleArray.length]; 
 	//Array for angular displacement
 	double[] angle = new double[particleArray.length];
+	//Array for counting periods
+	double[] periods = new int[particleArray.length];
 
 	//The start of the Verlet algorithm
 	
@@ -159,12 +161,23 @@ public class ParticleManyBody {
 	    
 	    if(i==0){
 	    //Compute the semimajor axes after first timestep integration
+		updateAngles(oldPositions, particleArray, angles);
 		for(int j=0; j < particleArray.length; j++){
-		    updateAngle(oldPositions, particleArray, angles);
-		    semimajor[j] = particleArray[j].getPosition().mag()*(1+eccentricities[j]*angle)/(1-Math.pow(eccentricities[j],2));
+		    semimajor[j] = particleArray[j].getPosition().mag()*
+			(1.0 + eccentricities[j]*Math.cos(angles[j]))/
+			(1-Math.pow(eccentricities[j],2));
+		    perihelions[j] = semimajor[j]*(1.0 - eccentricities[j]);
+		    aphelions[i] = semimajor[j]*(1.0 + eccentricities[j]);
 		}	
 	    }
 	    else{
+		updateAngles(oldPositions, particleArray, angles);
+		for (int j=0; j < particleArray.length; j++){
+		    if(angles[j] > 2*Math.PI){
+			periods[j]++;
+			angles[j]-=2*Math.PI;
+	    }
+		}
 	    }
 	    // Print the current parameters to files
 	    vmdEntry(particleArray, i+2, output);
@@ -189,6 +202,14 @@ public class ParticleManyBody {
 	}
 	    */
         }
+	
+	//Add the remaining fractional period
+	for (int i=0; i<periods.length; i++){
+	    period[i]+=angles[i]/(2*Math.PI);
+	    System.out.printf("%s has revolved %.3f times.\n", 
+			      particleArray[i].getLabel(), period[i]); 
+	    //	    System.out.printf("Its period is %.3f earth days 
+	}
 
 	//Print the maximum energy fluctuation
 	System.out.printf("Maximum energy fluctuation: %10.7f\n", Math.abs(eMax-eMin));
