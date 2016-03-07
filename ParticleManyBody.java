@@ -50,7 +50,6 @@ public class ParticleManyBody {
        
 	//Velocity of the centre of mass
 	Vector3D comVelocity = totalMomentum.div(totalMass);
-	System.out.printf("%s\n",comVelocity);
 	//Correcting the velocities
 	for (int i = 0; i < particleArray.length; i++){
 	    particleArray[i].setVelocity(Vector3D.
@@ -85,9 +84,9 @@ public class ParticleManyBody {
 	//Array for previous positions
 	Vector3D[] oldPositions = new Vector3D[particleArray.length]; 
 	//Array for angular displacement
-	double[] angle = new double[particleArray.length];
+	double[] angles = new double[particleArray.length];
 	//Array for counting periods
-	double[] periods = new int[particleArray.length];
+	double[] revolutions = new double[particleArray.length];
 
 	//The start of the Verlet algorithm
 	
@@ -118,9 +117,11 @@ public class ParticleManyBody {
 	Vector3D angMomentum = new Vector3D();
 	for(int i=0; i < particleArray.length; i++){
 	    momentum=particleArray[i].getVelocity().mult(particleArray[i].getMass());
-	    unitPosition = particleArray[i].getPosition();
+	    unitPosition = particleArray[i].getPosition().div(particleArray[i].getPosition().mag());
 	    angMomentum = Vector3D.crossVector(particleArray[i].getPosition(),momentum);
-	    eccentricities[i]=(Vector3D.subVector(Vector3D.crossVector(momentum,angMomentum).div(g*particleArray[i].getMass()),unitPosition)).mag();
+	    eccentricities[i]=(Vector3D.subVector(Vector3D.crossVector(momentum,angMomentum).
+						  div(g*particleArray[i].getMass()),
+						  unitPosition)).mag();
 	}
 	
         // Print the initial conditions to the files
@@ -174,7 +175,7 @@ public class ParticleManyBody {
 		updateAngles(oldPositions, particleArray, angles);
 		for (int j=0; j < particleArray.length; j++){
 		    if(angles[j] > 2*Math.PI){
-			periods[j]++;
+			revolutions[j]++;
 			angles[j]-=2*Math.PI;
 	    }
 		}
@@ -204,11 +205,14 @@ public class ParticleManyBody {
         }
 	
 	//Add the remaining fractional period
-	for (int i=0; i<periods.length; i++){
-	    period[i]+=angles[i]/(2*Math.PI);
+	for (int i=0; i<revolutions.length; i++){
+	    revolutions[i]+=angles[i]/(2*Math.PI);
 	    System.out.printf("%s has revolved %.3f times.\n", 
-			      particleArray[i].getLabel(), period[i]); 
-	    //	    System.out.printf("Its period is %.3f earth days 
+			      particleArray[i].getLabel(), revolutions[i]); 
+	    System.out.printf("Its period is %.3f earth days\n", dt*numstep/revolutions[i]);
+	     System.out.printf("Its eccentricity is %.3f\n", eccentricities[i]);
+	    System.out.printf("Its perihelion is %.3f AU\n", perihelions[i]);
+	    System.out.printf("Its aphelion is %.3f AU\n", aphelions[i]);
 	}
 
 	//Print the maximum energy fluctuation
@@ -325,7 +329,8 @@ public class ParticleManyBody {
      */
     public static void updateAngles(Vector3D[] oldPositions, Particle3D[] bodies, double[] angles){
 	for(int i =0; i < bodies.length; i++){
-	    angles[i]+ =  Math.acos(Vector3D.dotVector(oldPositions[j],bodies[j].getPosition())/(oldPositions[j].mag()+bodies[j].getPosition().mag()));
+	    angles[i] +=  Math.acos(Vector3D.dotVector(oldPositions[i],bodies[i].getPosition())/
+				    (oldPositions[i].mag()*bodies[i].getPosition().mag()));
 	}
     }
       /**
