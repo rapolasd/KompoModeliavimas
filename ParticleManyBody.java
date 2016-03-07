@@ -74,9 +74,19 @@ public class ParticleManyBody {
 	double eMax = e;
 	//Double for minimum total energy
 	double eMin = e;
-	
-	//The start of the Verlet algorithm
+	//Array for eccentricities
+	double[] eccentricities = new double[particleArray.length];
+	//Array for semimajor axes
+	double[] semimajor = new double[particleArray.length];
+	//Array for aphelions
+	double[] aphelions = new double[particleArray.length];
+	//Array for perihelions
+	double[] perihelions = new double[particleArray.length];
+	//Array for initial positions
+	Vector3D[] firstPositions = new Vector3D[particleArray.length]; 
 
+	//The start of the Verlet algorithm
+	
 	//Initiate the arrays for handling the forces
 	Vector3D[] forceArray = new Vector3D[particleArray.length];
 	for (int i = 0; i < forceArray.length; i++){
@@ -97,15 +107,33 @@ public class ParticleManyBody {
 
 	//Compute the initial force
 	leapForceArray(particleArray, forceArray, forceTable, g);
- 
+	
+	//Compute the eccentricities
+	Vector3D momentum = new Vector3D();
+	Vector3D unitPosition = new Vector3D();
+	Vector3D angMomentum = new Vector3D();
+	for(int i=0; i < particleArray.length; i++){
+	    momentum=particleArray[i].getVelocity().mult(particleArray[i].getMass());
+	    unitPosition = particleArray[i].getPosition();
+	    angMomentum = Vector3D.crossVector(particleArray[i].getPosition(),momentum);
+	    eccentricities[i]=(Vector3D.subVector(Vector3D.crossVector(momentum,angMomentum).div(g*particleArray[i].getMass()),unitPosition)).mag();
+	}
+	
         // Print the initial conditions to the files
 	vmdEntry(particleArray, 1, output);
  
  
         //Loop over timesteps
         for (int i=0;i<numstep;i++){
- 
-             // Update the postion using current velocity
+
+	    // Store initial position vectors
+	    if(i==0){
+		for(int j=0; j < particleArray.length; j++){
+		    firstPositions[j] = particleArray[j].getPosition();
+		}	
+	    }
+	    
+	    // Update the postion using current velocity
 	    leapPositionArray(particleArray, forceArray, dt);
  
             // Update the force using current position
@@ -129,6 +157,14 @@ public class ParticleManyBody {
 	    // Increase the time
             t = t + dt;
 	    
+	    if(i==0){
+	    //Compute the semimajor axes
+		double angle;
+		for(int j=0; j < particleArray.length; j++){
+		    angle =  Vector3D.dotVector(firstPositions[j],particleArray[j].getPosition())/(firstPositions[j].mag()+particleArray[j].getPosition().mag());
+		    semimajor[j] = particleArray[j].getPosition().mag()*(1+eccentricities[j]*angle)/(1-Math.pow(eccentricities[j],2));
+		}	
+	    }
 	    // Print the current parameters to files
 	    vmdEntry(particleArray, i+2, output);
 
