@@ -82,8 +82,8 @@ public class ParticleManyBody {
 	double[] aphelions = new double[particleArray.length];
 	//Array for perihelions
 	double[] perihelions = new double[particleArray.length];
-	//Array for initial positions
-	Vector3D[] firstPositions = new Vector3D[particleArray.length]; 
+	//Array for previous positions
+	Vector3D[] oldPositions = new Vector3D[particleArray.length]; 
 
 	//The start of the Verlet algorithm
 	
@@ -126,13 +126,11 @@ public class ParticleManyBody {
         //Loop over timesteps
         for (int i=0;i<numstep;i++){
 
-	    // Store initial position vectors
-	    if(i==0){
+	    // Store old position vectors
 		for(int j=0; j < particleArray.length; j++){
-		    firstPositions[j] = particleArray[j].getPosition();
+		    oldPositions[j] = particleArray[j].getPosition();
 		}	
-	    }
-	    
+   
 	    // Update the postion using current velocity
 	    leapPositionArray(particleArray, forceArray, dt);
  
@@ -158,10 +156,10 @@ public class ParticleManyBody {
             t = t + dt;
 	    
 	    if(i==0){
-	    //Compute the semimajor axes
+	    //Compute the semimajor axes after first timestep integration
 		double angle;
 		for(int j=0; j < particleArray.length; j++){
-		    angle =  Vector3D.dotVector(firstPositions[j],particleArray[j].getPosition())/(firstPositions[j].mag()+particleArray[j].getPosition().mag());
+		    angle =  Vector3D.dotVector(oldPositions[j],particleArray[j].getPosition())/(oldPositions[j].mag()+particleArray[j].getPosition().mag());
 		    semimajor[j] = particleArray[j].getPosition().mag()*(1+eccentricities[j]*angle)/(1-Math.pow(eccentricities[j],2));
 		}	
 	    }
