@@ -84,6 +84,8 @@ public class ParticleManyBody {
 	double[] perihelions = new double[particleArray.length];
 	//Array for previous positions
 	Vector3D[] oldPositions = new Vector3D[particleArray.length]; 
+	//Array for angular displacement
+	double[] angle = new double[particleArray.length];
 
 	//The start of the Verlet algorithm
 	
@@ -157,11 +159,12 @@ public class ParticleManyBody {
 	    
 	    if(i==0){
 	    //Compute the semimajor axes after first timestep integration
-		double angle;
 		for(int j=0; j < particleArray.length; j++){
-		    angle =  Vector3D.dotVector(oldPositions[j],particleArray[j].getPosition())/(oldPositions[j].mag()+particleArray[j].getPosition().mag());
+		    updateAngle(oldPositions, particleArray, angles);
 		    semimajor[j] = particleArray[j].getPosition().mag()*(1+eccentricities[j]*angle)/(1-Math.pow(eccentricities[j],2));
 		}	
+	    }
+	    else{
 	    }
 	    // Print the current parameters to files
 	    vmdEntry(particleArray, i+2, output);
@@ -291,6 +294,11 @@ public class ParticleManyBody {
 	      		     }
 	     	 }
      }
+    
+    /*Reikes aprasymo*/
+    public static void updateAngle(Vector3D oldposition, Particle3D bodies, double[] angles){
+	
+    }
       /**
      *Writes out particle’s parameters in format suitable for a VMD trajectory file
      *@param bodies a Particle3D array of bodies
