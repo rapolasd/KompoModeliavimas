@@ -251,13 +251,13 @@ public class ParticleManyBody {
 	 }
      }
       /**
-     *Updates all velocities using the position of particles and forces by Velocity Verlet method
-     *
-     *@param bodies an array of bodies to be integrated
-     *@param oldforces old forces that acted on the bodies
-     *@param forces forces that are currently acting on the bodies
-     *@param dt time step for integration
-     */
+       *Updates all velocities using the position of particles and forces by Velocity Verlet method
+       *
+       *@param bodies an array of bodies to be integrated
+       *@param oldforces old forces that acted on the bodies
+       *@param forces forces that are currently acting on the bodies
+       *@param dt time step for integration
+       */
      public static void leapVelocityVerletArray(Particle3D[] bodies,
 						Vector3D[] oldForces,
 						Vector3D[] forces,
@@ -269,12 +269,12 @@ public class ParticleManyBody {
 	 }
      }
       /**
-     *Updates all forces using the position of particles
-     *
-     *@param bodies an array of bodies
-     *@param oldforces old forces that acted on the bodies
-     *@param forces forces that are currently acting on the bodies
-     */
+       *Updates all forces using the position of particles
+       *
+       *@param bodies an array of bodies
+       *@param oldforces old forces that acted on the bodies
+       *@param forces forces that are currently acting on the bodies
+       */
      public static void leapForceArray(Particle3D[] bodies, Vector3D[] forces, 
 				       Vector3D[][] forcetable, double grav){
 		 for(int i=0; i < bodies.length; i++){
@@ -291,13 +291,21 @@ public class ParticleManyBody {
 	     forces[i].setVector(0.0, 0.0, 0.0);
 	     for(int j=0; j < bodies.length; j++){
 		 forces[i].add(forcetable[i][j]);
-	      		     }
+	     }
 	     	 }
      }
     
-    /*Reikes aprasymo*/
-    public static void updateAngle(Vector3D oldposition, Particle3D bodies, double[] angles){
-	
+    /**
+     *Updates all angular displacements using the dot product of current and previous positions of particles
+     *
+     *@param oldPositions an array of previous positions
+     *@param bodies array of bodies containing current positions
+     *@param angles array of angular displacements
+     */
+    public static void updateAngles(Vector3D[] oldPositions, Particle3D[] bodies, double[] angles){
+	for(int i =0; i < bodies.length; i++){
+	    angles[i]+ =  Math.acos(Vector3D.dotVector(oldPositions[j],bodies[j].getPosition())/(oldPositions[j].mag()+bodies[j].getPosition().mag()));
+	}
     }
       /**
      *Writes out particle’s parameters in format suitable for a VMD trajectory file
