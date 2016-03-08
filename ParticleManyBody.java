@@ -73,14 +73,17 @@ public class ParticleManyBody {
 	double eMax = e;
 	//Double for minimum total energy
 	double eMin = e;
-	//Array for eccentricities
-	double[] eccentricities = new double[particleArray.length];
-	//Array for semimajor axes
-	double[] semimajor = new double[particleArray.length];
+
 	//Array for aphelions
 	double[] aphelions = new double[particleArray.length];
 	//Array for perihelions
 	double[] perihelions = new double[particleArray.length];
+	//Set the initial positions for aphelion and perihilion
+	for (int i=0; i<particleArray.length; i++){
+	    aphelions[i] = particleArray[i].getPosition().mag();
+	    perihelions[i] = particleArray[i].getPosition().mag();
+	}
+
 	//Array for previous positions
 	Vector3D[] oldPositions = new Vector3D[particleArray.length]; 
 	//Array for angular displacement
@@ -111,20 +114,7 @@ public class ParticleManyBody {
 	//Compute the initial force
 	leapForceArray(particleArray, forceArray, forceTable, g);
 	
-	//Compute the eccentricities
-	Vector3D momentum = new Vector3D();
-	Vector3D unitPosition = new Vector3D();
-	Vector3D angMomentum = new Vector3D();
-	for(int i=0; i < particleArray.length; i++){
-	    momentum=particleArray[i].getVelocity().mult(particleArray[i].getMass());
-	    unitPosition = particleArray[i].getPosition().div(particleArray[i].getPosition().mag());
-	    angMomentum = Vector3D.crossVector(particleArray[i].getPosition(),momentum);
-	    eccentricities[i]=(Vector3D.subVector(Vector3D.crossVector(momentum,angMomentum).
-						  div(g*particleArray[i].getMass()),
-						  unitPosition)).mag();
-	}
-	
-        // Print the initial conditions to the files
+	// Print the initial conditions to the files
 	vmdEntry(particleArray, 1, output);
  
  
@@ -151,68 +141,44 @@ public class ParticleManyBody {
  	    //Check if current energy is minimum or maximum.
 	    eMin = Math.min(eMin, e);
 	    eMax = Math.max(eMax, e);
-	    
+
+	    //Check if the current position is perihilion/aphelion
+	    for(int j=0; j<particleArray.length; j++){
+		perihelions[j] = Math.min(particleArray[j].getPosition().mag(), perihelions[j]);
+		aphelions[j] =  Math.max(particleArray[j].getPosition().mag(), perihelions[j]);
+	    }
+
 	    //Update the old force
 	    for(int j=0;j < particleArray.length; j++){
-	     forceArray[j].copy(newForceArray[j]);
+		forceArray[j].copy(newForceArray[j]);
 	    }
            
 	    // Increase the time
             t = t + dt;
-	    
-	    if(i==0){
-	    //Compute the semimajor axes after first timestep integration
-		updateAngles(oldPositions, particleArray, angles);
-		for(int j=0; j < particleArray.length; j++){
-		    semimajor[j] = particleArray[j].getPosition().mag()*
-			(1.0 + eccentricities[j]*Math.cos(angles[j]))/
-			(1-Math.pow(eccentricities[j],2));
-		    perihelions[j] = semimajor[j]*(1.0 - eccentricities[j]);
-		    aphelions[i] = semimajor[j]*(1.0 + eccentricities[j]);
-		}	
-	    }
-	    else{
-		updateAngles(oldPositions, particleArray, angles);
-		for (int j=0; j < particleArray.length; j++){
-		    if(angles[j] > 2*Math.PI){
-			revolutions[j]++;
-			angles[j]-=2*Math.PI;
-	    }
+
+	    //Calculate the angles between the starting positions and check if
+	    //the planet did the full orbit
+	    updateAngles(oldPositions, particleArray, angles);
+	    for (int j=0; j < particleArray.length; j++){
+		if(angles[j] > 2*Math.PI){
+		    revolutions[j]++;
+		    angles[j]-=2*Math.PI;
 		}
 	    }
+	   
 	    // Print the current parameters to files
 	    vmdEntry(particleArray, i+2, output);
 
-	    /*    totalMomentum.setVector(0.0,0.0,0.0);
-	totalMass = 0.0;
-	for (int j = 0; j < particleArray.length; j++){
-	    totalMomentum.add(particleArray[j].getVelocity().
-			 mult(particleArray[j].getMass()));
-	    totalMass+=particleArray[j].getMass();
-	}
-       
-	//Velocity of the centre of mass
-	comVelocity = totalMomentum.div(totalMass);
-	System.out.printf("%s\n",comVelocity);
-	//Correcting the velocities
-	for (int j = 0; j < particleArray.length; j++){
-	    particleArray[j].setVelocity(Vector3D.
-					 subVector(particleArray[j].
-						   getVelocity(),
-						   comVelocity));
-	}
-	    */
         }
 	
 	//Add the remaining fractional period
 	for (int i=0; i<revolutions.length; i++){
 	    revolutions[i]+=angles[i]/(2*Math.PI);
-	    System.out.printf("%s has revolved %.3f times.\n", 
+	    System.out.printf("%s has orbited  %.3f times around the Sun.\n", 
 			      particleArray[i].getLabel(), revolutions[i]); 
-	    System.out.printf("Its period is %.3f earth days\n", dt*numstep/revolutions[i]);
-	     System.out.printf("Its eccentricity is %.3f\n", eccentricities[i]);
-	    System.out.printf("Its perihelion is %.3f AU\n", perihelions[i]);
-	    System.out.printf("Its aphelion is %.3f AU\n", aphelions[i]);
+	    System.out.printf("\t Period: %.3f earth days\n", dt*numstep/revolutions[i]);
+	    System.out.printf("\t Perihelion: %.3f AU\n", perihelions[i]);
+	    System.out.printf("\t Aphelion: %.3f AU\n", aphelions[i]);
 	}
 
 	//Print the maximum energy fluctuation
