@@ -84,6 +84,9 @@ public class ParticleManyBody {
 	    perihelions[i] = particleArray[i].getPosition().mag();
 	}
 
+	//Array for semimajor axes
+	double[] semimajor = new double[particleArray.length];
+
 	//Array for previous positions
 	Vector3D[] oldPositions = new Vector3D[particleArray.length]; 
 	//Array for angular displacement
@@ -191,8 +194,10 @@ public class ParticleManyBody {
 	    }
 	   
 	    //Calculate revolutions for the Moon w.r.t. Earth
-	    separationMoon = Particle3D.particleSeparation(particleArray[indexMoon],particleArray[indexEarth]);
-	    angleMoon +=  Math.acos(Vector3D.dotVector(oldSeparationMoon,separationMoon)/(oldSeparationMoon.mag()*separationMoon.mag()));
+	    separationMoon = Particle3D.particleSeparation(particleArray[indexMoon],
+							   particleArray[indexEarth]);
+	    angleMoon +=  Math.acos(Vector3D.dotVector(oldSeparationMoon,separationMoon)/
+				    (oldSeparationMoon.mag()*separationMoon.mag()));
 	    if(angleMoon > 2*Math.PI){
 		revolutionMoon++;
 		angleMoon-=2*Math.PI;
@@ -203,15 +208,18 @@ public class ParticleManyBody {
 	    vmdEntry(particleArray, i+2, output);
 
         }
-	
-	//Add the remaining fractional period
+
+
+       	//Add the remaining fractional period, calculating semimajor axes, printing the periods
 	for (int i=0; i<revolutions.length; i++){
 	    revolutions[i]+=angles[i]/(2*Math.PI);
+	    semimajor[i] = (perihelions[i]+aphelions[i])/2.0;
 	    System.out.printf("%s has orbited  %.3f times around the Sun.\n", 
 			      particleArray[i].getLabel(), revolutions[i]); 
 	    System.out.printf("\t Period: %.3f earth days\n", dt*numstep/revolutions[i]);
 	    System.out.printf("\t Perihelion: %.3f AU\n", perihelions[i]);
 	    System.out.printf("\t Aphelion: %.3f AU\n", aphelions[i]);
+	    System.out.printf("\t Semimajor Axis: %.3f AU\n", semimajor[i]);
 	}
 	//Add the remaining fractional revolution and print out values for Moon-Earth system
 	revolutionMoon+=angleMoon/(2*Math.PI);
