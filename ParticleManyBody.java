@@ -73,6 +73,9 @@ public class ParticleManyBody {
 	double eMax = e;
 	//Double for minimum total energy
 	double eMin = e;
+	
+	//Array for semimajor axes
+	double[] semimajor = new double[particleArray.length];
 
 	//Array for aphelions
 	double[] aphelions = new double[particleArray.length];
