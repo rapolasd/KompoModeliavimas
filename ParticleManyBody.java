@@ -200,7 +200,9 @@ public class ParticleManyBody {
 	    oldSeparationMoon.copy(separationMoon);
 
 	    // Print the current parameters to files
+	    if(i%10==0){
 	    vmdEntry(particleArray, i+2, output);
+	    }
 
         }
 	

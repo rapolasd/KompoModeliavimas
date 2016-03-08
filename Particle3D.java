@@ -121,9 +121,8 @@ public class Particle3D {
      *@return String representing the label and position of the particle.
      */
     public String toString() {
-        return getLabel()+" "+ position.getX() + " "
-	    + " " + position.getY() + " "
-	    +  " " + position.getZ() + " ";
+        return String.format("%s %.5f %.5f %.5f",getLabel(),position.getX(),
+			     position.getY(),position.getZ());
     }
 
      /* ******************************************
