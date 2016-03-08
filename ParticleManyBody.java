@@ -90,6 +90,30 @@ public class ParticleManyBody {
 	double[] angles = new double[particleArray.length];
 	//Array for counting periods
 	double[] revolutions = new double[particleArray.length];
+	//Index number of Earth
+	int indexEarth = 0;
+	//Index number of Moon
+	int indexMoon = 0;
+	//Old Moon-Earth separation
+	Vector3D oldSeparationMoon = new Vector3D();
+	//Current Moon-Earth separation
+	Vector3D separationMoon= new Vector3D();
+	//Angular displacement for Moon w.r.t. Earth
+	double angleMoon = 0;
+	//Revolution counter for Moon w.r.t. Earth
+	double revolutionMoon = 0;
+	
+	//Find which particle is the Moon, and which is the Earth
+	for(int i = 0; i < particleArray.length; i++){
+	    if(particleArray[i].getLabel().equals("Moon")){
+		indexMoon = i;
+	    }
+	    else if(particleArray[i].getLabel().equals("Earth")){
+		indexEarth = i;
+	    }
+	}
+	//Initialise oldSeparationMoon
+	oldSeparationMoon = Particle3D.particleSeparation(particleArray[indexMoon],particleArray[indexEarth]);
 
 	//The start of the Verlet algorithm
 	
@@ -166,6 +190,15 @@ public class ParticleManyBody {
 		}
 	    }
 	   
+	    //Calculate revolutions for the Moon w.r.t. Earth
+	    separationMoon = Particle3D.particleSeparation(particleArray[indexMoon],particleArray[indexEarth]);
+	    angleMoon +=  Math.acos(Vector3D.dotVector(oldSeparationMoon,separationMoon)/(oldSeparationMoon.mag()*separationMoon.mag()));
+	    if(angleMoon > 2*Math.PI){
+		revolutionMoon++;
+		angleMoon-=2*Math.PI;
+	    }
+	    oldSeparationMoon.copy(separationMoon);
+
 	    // Print the current parameters to files
 	    vmdEntry(particleArray, i+2, output);
 
@@ -180,7 +213,12 @@ public class ParticleManyBody {
 	    System.out.printf("\t Perihelion: %.3f AU\n", perihelions[i]);
 	    System.out.printf("\t Aphelion: %.3f AU\n", aphelions[i]);
 	}
-
+	//Add the remaining fractional revolution and print out values for Moon-Earth system
+	revolutionMoon+=angleMoon/(2*Math.PI);
+	System.out.printf("\n\n%s has revolved %.3f times.\n", 
+			  particleArray[indexMoon].getLabel(), revolutionMoon); 
+	System.out.printf("Its period is %.3f Earth days\n", dt*numstep/revolutionMoon);
+	
 	//Print the maximum energy fluctuation
 	System.out.printf("Maximum energy fluctuation: %10.7f\n", Math.abs(eMax-eMin));
 	System.out.printf("Smaller than 1E-06? %s\n", 1.0E-06> Math.abs(eMax-eMin));
