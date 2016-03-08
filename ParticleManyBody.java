@@ -224,11 +224,13 @@ public class ParticleManyBody {
 	    }
 	    else{
 	    revolutions[i]+=angles[i]/(2*Math.PI);
+	    semimajor[i] = (perihelions[i]+aphelions[i])/2.0;
 	    System.out.printf("%s has orbited  %.3f times around the Sun.\n", 
 			      particleArray[i].getLabel(), revolutions[i]); 
 	    System.out.printf("\t Period: %.3f Earth days\n", dt*numstep/revolutions[i]);
 	    System.out.printf("\t Perihelion: %.3f AU\n", perihelions[i]);
 	    System.out.printf("\t Aphelion: %.3f AU\n", aphelions[i]);
+	    System.out.printf("\t Semimajor Axis: %.3f AU\n", semimajor[i]);
 	    }
 	}
 	
