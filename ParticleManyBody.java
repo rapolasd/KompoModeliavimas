@@ -166,10 +166,16 @@ public class ParticleManyBody {
 	    eMin = Math.min(eMin, e);
 	    eMax = Math.max(eMax, e);
 
-	    //Check if the current position is perihilion/aphelion
+	    //Check if the current position is perihelion/aphelion
 	    for(int j=0; j<particleArray.length; j++){
+		if(j==indexMoon){
+		    perihelions[j] = Math.min(oldSeparationMoon.mag(), perihelions[j]);
+		    aphelions[j] =  Math.max(oldSeparationMoon.mag(), perihelions[j]);
+		}
+		else{
 		perihelions[j] = Math.min(particleArray[j].getPosition().mag(), perihelions[j]);
-		aphelions[j] =  Math.max(particleArray[j].getPosition().mag(), perihelions[j]);
+		aphelions[j] =  Math.max(particleArray[j].getPosition().mag(), aphelions[j]);
+		}
 	    }
 
 	    //Update the old force
@@ -200,7 +206,7 @@ public class ParticleManyBody {
 	    oldSeparationMoon.copy(separationMoon);
 
 	    // Print the current parameters to files
-	    if(i%10==0){
+	    if(i%5==0){
 	    vmdEntry(particleArray, i+2, output);
 	    }
 
@@ -208,18 +214,23 @@ public class ParticleManyBody {
 	
 	//Add the remaining fractional period
 	for (int i=0; i<revolutions.length; i++){
+	    if(i==indexMoon){
+		revolutionMoon+=angleMoon/(2*Math.PI);
+		System.out.printf("%s has orbited  %.3f times around the Earth.\n", 
+			      particleArray[i].getLabel(), revolutionMoon); 
+		System.out.printf("\t Period: %.3f Earth days\n", dt*numstep/revolutionMoon);
+		System.out.printf("\t Perihelion: %.3f AU\n", perihelions[i]);
+		System.out.printf("\t Aphelion: %.3f AU\n", aphelions[i]);
+	    }
+	    else{
 	    revolutions[i]+=angles[i]/(2*Math.PI);
 	    System.out.printf("%s has orbited  %.3f times around the Sun.\n", 
 			      particleArray[i].getLabel(), revolutions[i]); 
-	    System.out.printf("\t Period: %.3f earth days\n", dt*numstep/revolutions[i]);
+	    System.out.printf("\t Period: %.3f Earth days\n", dt*numstep/revolutions[i]);
 	    System.out.printf("\t Perihelion: %.3f AU\n", perihelions[i]);
 	    System.out.printf("\t Aphelion: %.3f AU\n", aphelions[i]);
+	    }
 	}
-	//Add the remaining fractional revolution and print out values for Moon-Earth system
-	revolutionMoon+=angleMoon/(2*Math.PI);
-	System.out.printf("\n\n%s has revolved %.3f times.\n", 
-			  particleArray[indexMoon].getLabel(), revolutionMoon); 
-	System.out.printf("Its period is %.3f Earth days\n", dt*numstep/revolutionMoon);
 	
 	//Print the maximum energy fluctuation
 	System.out.printf("Maximum energy fluctuation: %10.7f\n", Math.abs(eMax-eMin));
