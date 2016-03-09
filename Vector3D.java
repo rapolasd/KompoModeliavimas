@@ -159,12 +159,8 @@ public class Vector3D {
     return Math.sqrt(this.magSq());
     }
  
+
     /** Multiplies a Vector3D by a double.
-     *
-     * @param a the double being multiplied by a vector
-     */
- 
-/** Multiplies a Vector3D by a double.
      *
      * @param a the double being multiplied by a vector
      * @return a Vector3D multiplied by a double.
@@ -226,7 +222,7 @@ public class Vector3D {
      *
      * @param a the first Vector3D
      * @param b the second Vector3D
-     * @return a vector3D representing the sum of the two vectors.
+     * @return a Vector3D instance representing the sum of the two vectors.
      */
  
     public static Vector3D addVector(Vector3D a, Vector3D b){
@@ -239,7 +235,7 @@ public class Vector3D {
      *
      * @param a the first Vector3D
      * @param b the second Vector3D
-     * @return a Vector3D representing first Vector3D subtracted by a second Vector3D.
+     * @return a Vector3D instance representing first Vector3D subtracted by a second Vector3D.
      */
  
     public static Vector3D subVector(Vector3D a, Vector3D b){
@@ -265,7 +261,7 @@ public class Vector3D {
      *
      * @param a the first Vector3D
      * @param b the second Vector3D
-     * @return a Vector3D representing the vector product of the two vectors.
+     * @return a Vector3D instance representing the vector product of the two vectors.
      */
  
     public static Vector3D crossVector(Vector3D a, Vector3D b){
